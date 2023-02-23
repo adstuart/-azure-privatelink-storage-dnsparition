@@ -88,3 +88,4 @@ blob.ams09prdstr07a.store.core.windows.net. 60 IN A 20.60.223.100
 ```
 
 This is never an issue, because the initial storage account name string always has to be unique, so regardless of the dnszone number (1-99) we always get a unique CNAME, and therefore unique A record in privatelink.blob.core.windows.net, despite the initial FQDN coming from a differnet public zone format.
+
