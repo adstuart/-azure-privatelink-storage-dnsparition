@@ -41,5 +41,50 @@ Note the output with flag enabled and new syntax suffix.
 
 Note if you navigate to your newly formed Storage Account in the portal, and try and create a Private Endpoint from the Networking blade, this will fail, even if using the custom portal URL for this feature.
 
-![](images/2023-02-23-10-07-36.png)
-![](images/2023-02-23-10-08-23.png)
+![](images/2023-02-23-10-12-29.png)
+
+## Create Private Endpoint manually via Resource ID
+
+Instead we can navigate to the standard PL creation experience in the portal, and specify the Resource ID of our storage account, with required sub-resource (e.g. Blob).
+
+![](images/2023-02-23-10-15-50.png)
+
+This will not allow you to automagically generate the required Azure DNS Private Zone, therefore we have to fix the DNS.
+
+## Azure DNS Private Zones
+
+Note how the PE is create successfully, but we lack the required Azure Private DNS zone config to get this working in an automated fashion (without manually editing host records).
+
+![](images/2023-02-23-10-17-21.png)
+
+### Azure Public DNS CNAME
+
+The normal Private Link CNAME insertion still happens in Public DNS when you associate the Private Endpoint to the storage account. We can verify this be querying the FQDN of our Storage Account:
+
+```
+march2023dnspartition.z20.blob.storage.azure.net. 60 IN	CNAME march2023dnspartition.privatelink.blob.core.windows.net.
+march2023dnspartition.privatelink.blob.core.windows.net. 60 IN CNAME blob.ams09prdstr07a.store.core.windows.net.
+blob.ams09prdstr07a.store.core.windows.net. 60 IN A 20.60.223.100
+```
+
+### Update Private DNS zone
+
+To fix this, we manually create an A record in our (likely already pre-existing) Azure Private DNS zone used for privatelink.blob.core.windows.net
+
+![](images/2023-02-23-10-23-41.png)
+
+## Problems?
+
+If you created another Storage Account (or many more) (probably you are, if you are using this feature) then what happens if you get an account with the FQDN:
+
+> march2023dnspartition.z99.blob.storage.azure.net
+
+Well now we have a problem, because this would also CNAME to the same privatelink FQDN e.g.
+
+```
+march2023dnspartition.z99.blob.storage.azure.net. 60 IN	CNAME march2023dnspartition.privatelink.blob.core.windows.net.
+march2023dnspartition.privatelink.blob.core.windows.net. 60 IN CNAME blob.ams09prdstr07a.store.core.windows.net.
+blob.ams09prdstr07a.store.core.windows.net. 60 IN A 20.60.223.100
+```
+
+This is never an issue, because the initial storage account name string always has to be unique, so regardless of the dnszone number (1-99) we always get a unique CNAME, and therefore unique A record in privatelink.blob.core.windows.net, despite the initial FQDN coming from a differnet public zone format.
