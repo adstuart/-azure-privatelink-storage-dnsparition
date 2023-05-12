@@ -8,7 +8,7 @@ Official docs - https://learn.microsoft.com/en-us/azure/storage/common/storage-a
 
 ## DNS changes
 
-Generally when you deploy a storage account, we get a predefined endpoint in the format of:
+Generally, when you deploy a storage account, we get a predefined endpoint in the format of:
 
 > myaccountname.blob.core.windows.net 
 
@@ -20,7 +20,7 @@ This subtle change in DNS prefix creates a hurdle for Azure DNS Private Zones in
 
 ## Create your Storage Account
 
-Register for the preview, and create your storage account with the feature flag enabled. 
+Register for the preview and create your storage account with the feature flag enabled. 
 
 ```
 adam [ ~ ]$ az extension add -n storage-preview
@@ -39,13 +39,13 @@ Note the output with flag enabled and new syntax suffix.
 
 ## Portal UI for Storage Account PE creation is broken
 
-Note if you navigate to your newly formed Storage Account in the portal, and try and create a Private Endpoint from the Networking blade, this will fail, even if using the custom portal URL for this feature.
+Note if you navigate to your newly formed Storage Account in the portal and try and create a Private Endpoint from the Networking blade, this will fail, even if using the custom portal URL for this feature.
 
 ![](images/2023-02-23-10-12-29.png)
 
 ## Create Private Endpoint manually via Resource ID
 
-Instead we can navigate to the standard PL creation experience in the portal, and specify the Resource ID of our storage account, with required sub-resource (e.g. Blob).
+Instead, we can navigate to the standard PL creation experience in the portal, and specify the Resource ID of our storage account, with required sub-resource (e.g. Blob).
 
 ![](images/2023-02-23-10-15-50.png)
 
@@ -87,5 +87,5 @@ march2023dnspartition.privatelink.blob.core.windows.net. 60 IN CNAME blob.ams09p
 blob.ams09prdstr07a.store.core.windows.net. 60 IN A 20.60.223.100
 ```
 
-This is never an issue, because the initial storage account name string always has to be unique, so regardless of the dnszone number (1-99) we always get a unique CNAME, and therefore unique A record in privatelink.blob.core.windows.net, despite the initial FQDN coming from a differnet public zone format.
+This is never an issue, because the initial storage account name string always must be unique, so regardless of the dnszone number (1-99) we always get a unique CNAME, and therefore unique A record in privatelink.blob.core.windows.net, despite the initial FQDN coming from a different public zone format.
 
