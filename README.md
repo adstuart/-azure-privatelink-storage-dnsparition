@@ -1,3 +1,13 @@
+> ⚠️ **Archived — April 2026**
+>
+> Microsoft has announced that **AzureDnsZone endpoints (preview) for Azure Blob Storage will be retired on 31 March 2027**. New storage accounts can no longer use this feature from October 2026. Customers should transition to standard endpoints for all deployments.
+>
+> This repo is archived because the feature it documents is being retired and never reached GA. The content is preserved for historical reference only.
+>
+> **Announcement:** [Azure Service Health advisory DPXZ-X08](https://app.azure.com/h/DPXZ-X08) · [Storage account endpoints documentation](https://learn.microsoft.com/en-us/azure/storage/common/storage-account-overview#azure-dns-zone-endpoints-preview)
+
+---
+
 # Using Azure Private Link with PartitionedDns enabled Azure Storage accounts
 
 A short guide detailing how to enable Private Endpoints for Azure Storage accounts using the new DNS partition feature.
